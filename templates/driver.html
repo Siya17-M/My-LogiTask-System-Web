@@ -1,0 +1,116 @@
+{% extends "base.html" %} {% block nav %}
+<a href="{{ url_for('driver_dashboard') }}" class="active">My Tasks</a>
+<a href="#history">History</a>
+{% endblock %} {% block content %}
+<div class="tabs">
+  <a
+    href="{{ url_for('driver_dashboard', status='All') }}"
+    class="{{ 'active' if status_filter == 'All' }}"
+    >All</a
+  >
+  <a
+    href="{{ url_for('driver_dashboard', status='Pending') }}"
+    class="{{ 'active' if status_filter == 'Pending' }}"
+    >Pending</a
+  >
+  <a
+    href="{{ url_for('driver_dashboard', status='In Progress') }}"
+    class="{{ 'active' if status_filter == 'In Progress' }}"
+    >In Progress</a
+  >
+  <a
+    href="{{ url_for('driver_dashboard', status='Completed') }}"
+    class="{{ 'active' if status_filter == 'Completed' }}"
+    >Completed</a
+  >
+</div>
+
+<div class="panel">
+  <h2>Task List</h2>
+
+  {% for t in tasks %}
+  <div class="task-card">
+    <div>
+      <div class="task-title">{{ t.title }}</div>
+      <div class="route">
+        <span class="dot start"></span
+        ><span class="loc">Pickup: {{ t.pickup_location }}</span>
+        <span class="line"></span>
+        <span class="dot end"></span
+        ><span class="loc">Drop-off: {{ t.dropoff_location }}</span>
+      </div>
+    </div>
+    <div class="task-meta">
+      {% if t.status == 'Completed' %}<span class="badge completed"
+        >Completed</span
+      >
+      {% elif t.status == 'In Progress' %}<span class="badge in-progress"
+        >In Progress</span
+      >
+      {% else %}<span class="badge pending">Pending</span>{% endif %}
+      <button
+        class="btn btn-ghost btn-sm"
+        onclick="openTaskModal({{ t.id }}, '{{ t.title | e }}', '{{ t.status }}')"
+      >
+        View Task
+      </button>
+    </div>
+  </div>
+  {% else %}
+  <p style="color: var(--ink-soft)">No tasks in this view.</p>
+  {% endfor %}
+
+  <div class="page-footer">
+    <a href="#" onclick="return false;">&larr; Update Status</a>
+    <a href="#reports">View Reports &rarr;</a>
+  </div>
+</div>
+{% endblock %} {% block modals %}
+<div class="modal-backdrop" id="viewTaskModal">
+  <div class="modal">
+    <h3 id="taskModalTitle">Update Task</h3>
+    <form method="POST" action="{{ url_for('driver_update_status') }}">
+      <input type="hidden" name="task_id" id="modalTaskId" />
+      <input type="hidden" name="current_tab" value="{{ status_filter }}" />
+      <div class="field">
+        <label>Status</label>
+        <select name="status" id="modalStatus">
+          {% for s in statuses %}
+          <option value="{{ s }}">{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Miles driven (if completed)</label>
+        <input
+          type="number"
+          step="0.1"
+          name="miles_driven"
+          placeholder="e.g. 42"
+        />
+      </div>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn btn-ghost"
+          onclick="
+            document.getElementById('viewTaskModal').classList.remove('open')
+          "
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-amber">Update Status</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  function openTaskModal(id, title, status) {
+    document.getElementById("taskModalTitle").textContent = title;
+    document.getElementById("modalTaskId").value = id;
+    document.getElementById("modalStatus").value = status;
+    document.getElementById("viewTaskModal").classList.add("open");
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block nav %}
+  <a href="{{ url_for('manager_dashboard') }}" class="active">Dashboard</a>
+  <a href="#reports">Reports</a>
+  <a href="#drivers">Drivers</a>
+{% endblock %}
+
+{% block content %}
+  {% set _ = page_title | default('Manager Dashboard') %}
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="label">Active Tasks</div>
+      <div class="value">{{ active }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Completed Tasks</div>
+      <div class="value">{{ completed }}</div>
+    </div>
+    <div class="stat-card" style="flex: 1.6;">
+      <div class="label">Driver Performance &mdash; tasks completed</div>
+      <div class="bar-chart">
+        {% if perf_chart %}
+          {% set max_val = (perf_chart | map(attribute='completed') | max) %}
+          {% for row in perf_chart %}
+            <div class="bar-col">
+              <div class="bar-value">{{ row.completed }}</div>
+              <div class="bar" style="height: {% if max_val %}{{ [[(row.completed / max_val * 90) | int], 4] | max }}{% else %}4{% endif %}px;"></div>
+              <div class="bar-label">{{ row.driver }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="bar-label">No completed tasks yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <datalist id="driverSuggestions">
+    {% for name in driver_suggestions %}
+      <option value="{{ name }}"></option>
+    {% endfor %}
+  </datalist>
+
+  <div class="panel" id="reports">
+    <h2>Reports</h2>
+    <form method="POST" action="{{ url_for('manager_report') }}">
+      <div class="filter-row">
+        <div class="field">
+          <label>Date from</label>
+          <input type="date" name="date_from">
+        </div>
+        <div class="field">
+          <label>Date to</label>
+          <input type="date" name="date_to">
+        </div>
+        <div class="field" id="drivers">
+          <label>Driver</label>
+          <input type="text" name="driver" list="driverSuggestions" placeholder="Any name, or leave blank for all">
+        </div>
+        <div class="field">
+          <label>Task type</label>
+          <select name="task_type">
+            <option value="">All types</option>
+            {% for t in task_types %}
+              <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-amber" type="submit">Generate Report</button>
+      </div>
+    </form>
+
+    {% if report_rows is not none %}
+      <h2 style="margin-top: 22px;">Report Summary</h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>Date</th><th>Driver</th><th>Task</th><th>Miles Driven</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          {% for row in report_rows %}
+          <tr>
+            <td class="mono">{{ row.date }}</td>
+            <td>{{ row.driver }}</td>
+            <td>{{ row.task }}</td>
+            <td class="mono">{{ row.miles }}</td>
+            <td>
+              {% if row.status == 'Completed' %}<span class="badge completed">Completed</span>
+              {% elif row.status == 'In Progress' %}<span class="badge in-progress">In Progress</span>
+              {% else %}<span class="badge pending">Pending</span>{% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" style="color: var(--ink-soft);">No tasks match those filters.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="page-footer">
+        <a href="{{ url_for('manager_dashboard') }}">&larr; Back to Dashboard</a>
+        <div style="display:flex; gap: 18px;">
+          <a href="{{ url_for('manager_export', fmt='pdf') }}">Export PDF</a>
+          <a href="{{ url_for('manager_export', fmt='csv') }}">Export CSV &rarr;</a>
+        </div>
+      </div>
+
+      {% if submitted %}
+        <div class="toast-banner" style="margin-top:16px;">&#10003; Status Submitted!</div>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}

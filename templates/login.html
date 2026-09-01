@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LogiTask - Log In</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="brand">
+        <div class="name">LogiTask</div>
+        <div class="tag">FLEET CONTROL TOWER</div>
+      </div>
+
+      <div class="role-tabs">
+        <a href="{{ url_for('login', role='manager') }}" class="{{ 'active' if role_tab == 'manager' }}">Manager</a>
+        <a href="{{ url_for('login', role='dispatcher') }}" class="{{ 'active' if role_tab == 'dispatcher' }}">Dispatcher</a>
+        <a href="{{ url_for('login', role='driver') }}" class="{{ 'active' if role_tab == 'driver' }}">Driver</a>
+      </div>
+
+      {% if error %}
+        <div class="login-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <input type="hidden" name="role" value="{{ role_tab }}">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Log in as {{ role_tab | capitalize }}</button>
+      </form>
+
+      <div class="login-hint">
+        Demo accounts &mdash;
+        {% if role_tab == 'manager' %} manager1 / Manager@2026
+        {% elif role_tab == 'dispatcher' %} dispatch1 / Dispatch@2026
+        {% else %} driver1 / Driver@2026 &nbsp;or&nbsp; driver2 / Driver@2026
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

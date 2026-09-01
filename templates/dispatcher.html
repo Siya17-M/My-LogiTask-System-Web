@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block nav %}
+  <a href="{{ url_for('dispatcher_dashboard') }}" class="active">Dashboard</a>
+  <a href="#drivers">Drivers</a>
+  <a href="#reports">Reports</a>
+{% endblock %}
+
+{% block content %}
+  <datalist id="driverSuggestions">
+    {% for name in driver_suggestions %}<option value="{{ name }}">{% endfor %}
+  </datalist>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="label">Active Tasks</div>
+      <div class="value">{{ active }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Completed Tasks</div>
+      <div class="value">{{ completed }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Drivers Available</div>
+      <div class="value amber">{{ drivers_available }}</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <button class="btn btn-amber" onclick="document.getElementById('createTaskModal').classList.add('open')">+ Create Task</button>
+  </div>
+
+  <div class="panel">
+    <h2>Current Tasks</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th>Task</th><th>Route</th><th>Type</th><th>Driver</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for t in tasks %}
+        <tr>
+          <td>{{ t.title }}</td>
+          <td>
+            <div class="route">
+              <span class="dot start"></span><span class="loc">{{ t.pickup_location }}</span>
+              <span class="line"></span>
+              <span class="dot end"></span><span class="loc">{{ t.dropoff_location }}</span>
+            </div>
+          </td>
+          <td>{{ t.task_type }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('dispatcher_assign_driver') }}" style="display:flex; gap:6px;">
+              <input type="hidden" name="task_id" value="{{ t.id }}">
+              <input
+                type="text" name="driver" list="driverSuggestions"
+                value="{{ t.assigned_to or '' }}" placeholder="Type any name"
+                style="min-width: 140px; padding: 6px 8px; font-size:12.5px;"
+                onchange="this.form.submit()">
+            </form>
+          </td>
+          <td>
+            {% if t.status == 'Completed' %}<span class="badge completed">Completed</span>
+            {% elif t.status == 'In Progress' %}<span class="badge in-progress">In Progress</span>
+            {% else %}<span class="badge pending">Pending</span>{% endif %}
+          </td>
+          <td></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="color: var(--ink-soft);">No tasks yet. Click "+ Create Task" to add one.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="page-footer">
+      <span style="color: var(--ink-soft);">&larr; Assign a driver directly from the table above</span>
+      <a href="#reports">View Reports &rarr;</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block modals %}
+  <div class="modal-backdrop" id="createTaskModal">
+    <div class="modal">
+      <h3>Create Task</h3>
+      <form method="POST" action="{{ url_for('dispatcher_create_task') }}">
+        <div class="field">
+          <label>Task title</label>
+          <input type="text" name="title" required placeholder="e.g. Deliver retail restock">
+        </div>
+        <div class="field">
+          <label>Pickup location (optional)</label>
+          <input type="text" name="pickup_location" placeholder="Any location - e.g. Midrand Depot">
+        </div>
+        <div class="field">
+          <label>Drop-off location (optional)</label>
+          <input type="text" name="dropoff_location" placeholder="Any location - e.g. Sandton Clinic">
+        </div>
+        <div class="field">
+          <label>Task type</label>
+          <select name="task_type">
+            {% for t in task_types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label>Priority</label>
+          <select name="priority">
+            <option>Low</option><option selected>Medium</option><option>High</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Due date</label>
+          <input type="date" name="due_date">
+        </div>
+        <div class="field">
+          <label>Assign driver (optional)</label>
+          <input type="text" name="assigned_to" list="driverSuggestions" placeholder="Type any name, or leave blank">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="document.getElementById('createTaskModal').classList.remove('open')">Cancel</button>
+          <button type="submit" class="btn btn-amber">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

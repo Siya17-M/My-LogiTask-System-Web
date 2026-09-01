@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "title": "Deliver medical supplies",
+    "pickup_location": "Johannesburg CBD",
+    "dropoff_location": "Sandton Clinic",
+    "task_type": "Delivery",
+    "priority": "High",
+    "due_date": "2026-08-21",
+    "status": "Completed",
+    "assigned_to": "Thabo Mokoena",
+    "miles_driven": 42,
+    "created_at": "2026-08-20 09:00:00"
+  },
+  {
+    "id": 2,
+    "title": "Collect returned stock",
+    "pickup_location": "Midrand Depot",
+    "dropoff_location": "Johannesburg CBD",
+    "task_type": "Pickup",
+    "priority": "Medium",
+    "due_date": "2026-08-22",
+    "status": "Completed",
+    "assigned_to": "Lindiwe Dube",
+    "miles_driven": 18,
+    "created_at": "2026-08-20 09:00:00"
+  },
+  {
+    "id": 3,
+    "title": "Deliver furniture order",
+    "pickup_location": "Pretoria Warehouse",
+    "dropoff_location": "Centurion",
+    "task_type": "Delivery",
+    "priority": "Medium",
+    "due_date": "2026-08-23",
+    "status": "In Progress",
+    "assigned_to": "Thabo Mokoena",
+    "miles_driven": 0,
+    "created_at": "2026-08-20 09:00:00"
+  },
+  {
+    "id": 4,
+    "title": "Weekly vehicle inspection",
+    "pickup_location": "Midrand Depot",
+    "dropoff_location": "Midrand Depot",
+    "task_type": "Inspection",
+    "priority": "Low",
+    "due_date": "2026-08-24",
+    "status": "Pending",
+    "assigned_to": "Lindiwe Dube",
+    "miles_driven": 0,
+    "created_at": "2026-08-20 09:00:00"
+  },
+  {
+    "id": 5,
+    "title": "Deliver retail restock",
+    "pickup_location": "Midrand Depot",
+    "dropoff_location": "Fourways Mall",
+    "task_type": "Delivery",
+    "priority": "High",
+    "due_date": "2026-08-25",
+    "status": "Pending",
+    "assigned_to": null,
+    "miles_driven": 0,
+    "created_at": "2026-08-20 09:00:00"
+  },
+  {
+    "id": 6,
+    "title": "Fleet maintenance check",
+    "pickup_location": "Midrand Depot",
+    "dropoff_location": "Midrand Depot",
+    "task_type": "Maintenance",
+    "priority": "Low",
+    "due_date": "2026-08-26",
+    "status": "Completed",
+    "assigned_to": "Thabo Mokoena",
+    "miles_driven": 0,
+    "created_at": "2026-08-20 09:00:00"
+  },
+  {
+    "id": 7,
+    "title": "Deliver e-commerce parcels",
+    "pickup_location": "Johannesburg CBD",
+    "dropoff_location": "Roodepoort",
+    "task_type": "Delivery",
+    "priority": "Medium",
+    "due_date": "2026-08-27",
+    "status": "Pending",
+    "assigned_to": "Lindiwe Dube",
+    "miles_driven": 0,
+    "created_at": "2026-08-20 09:00:00"
+  }
+]
